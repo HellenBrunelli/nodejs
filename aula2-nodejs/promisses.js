@@ -1,43 +1,45 @@
-//  Promisses
-
-// ***************Vamos começar a refatorar
-
-
+//  Refatorando Callback para Promisses
 
 /*
 Obter usuário
 Obter o número de telefone do usuário a partir do ID
 Obter o Endereço do usuário pelo ID
 */
+//importamos um módulo interno do node.js
+const util = require('util')
 
-// Simular em background
-
-//o callback tem dois parâmetros
-//o primeiro é o erro o segundo o sucesso
-//por padrão o callback é sempre o ultimo parâmetro
+//pegar a função que trabalha com callback e converter ela para promisse sem fazer alteração nenhuma nela.
+const obterEnderecoAsync =  util.promisify(obterEndereco)
 
 
-//Após 1 segundo chame o callback para informar que terminamos
-function obterUsuario(callback) {
-    setTimeout(() => {
-        return callback(null, {
-            id: 1,
-            nome: "Hellen",
-            dataNascimento: new Date()
-        })
-    }, 1000)
+function obterUsuario() {
+    // quando der algum problema chama o reject
+    // quando for sucesso chama o resolve
+    return new Promise(function resolvePromisse(resolve, reject) {
+        //espera um segundo para resolver e retorne a promisse
+        setTimeout(() => {
+            // return reject(new Error('Deu ruim de verdade'))
+            return resolve ({
+                id: 1,
+                nome: "Hellen",
+                dataNascimento: new Date()
+            })
+        }, 1000)
+    })
 }
 
-function obterTelefone(idUsuario, callback) {
-    setTimeout(() => {
-        return callback(null, {
-            telefone: 999999999,
-            ddd: 11
-        })
-    }, 2000);
+function obterTelefone(idUsuario) {
+    return new Promise(function resolverPromisse(resolve, reject){
+        setTimeout(() => {
+            return resolve({
+                telefone: 999999999,
+                ddd: 11
+            })
+        }, 2000);
+    })
 }
 
-function obterEndereço(idUsuario, callback) {
+function obterEndereco(idUsuario, callback) {
     setTimeout(() => {
         return callback(null, {
             rua: "dos bobos",
@@ -47,38 +49,83 @@ function obterEndereço(idUsuario, callback) {
 
 }
 
-function resolverUsuario(error, usuario) {
-    //no JS valor nulloo vazio e zero = false tudo que for diferente disso é = true
-    console.log('usuario',usuario)
-}
+const usuarioPromisse = obterUsuario();
 
-//forma de executar funcões com sincronismo
-//quando vc terminar de executar a função obter usuario execute a resolverUsuario
-obterUsuario(function resolverUsuario(error, usuario) {
-    if(error){
-        console.error('deu ruim em usuário', error)
-        return;
-    }
-    //primeiro parâmetro é o id usuario e o segundo o callback
-    obterTelefone(usuario.id, function resolvertelefone(error1, telefone ) {
-        if(error1){
-            console.error('deu ruim em telefone', error1)
-            return;
-        }
-        obterEndereço(usuario.id, function resolverEndereco(error2, endereco) {
-            if(error2){
-                console.error('deu ruim em endereço', error2)
-                return;
+//para manipular o sucesso usamos a função .then
+//para manipular erros usamos o .catch
+//pipe: usuario --> telefone --> telefone
+
+usuarioPromisse
+    .then(function (usuario) {
+        return obterTelefone(usuario.id)
+            .then(function resolverTelefone(result) {
+                return {
+                    usuario: {
+                        nome: usuario.nome,
+                        id: usuario.id
+                    },
+                    telefone: result
+                }
+            })
+    })
+    .then(function (resultado) {
+        const endereco = obterEnderecoAsync(resultado.usuario.id)
+        return endereco.then(function resolverEndereco(result) {
+            return {
+                usuario: resultado.usuario,
+                telefone: resultado.telefone,
+                endereco: result
             }
-
-            console.log(`
-                Nome: ${usuario.nome},
-                Endereco: ${endereco.rua},
-                Telefone: (${telefone.ddd}) ${telefone.telefone}
-            `)
         })
     })
-}) 
-// const telefone = obterTelefone(usuario.id);
+    .then(function (resultado) {
+        console.log(`
+            Nome: ${resultado.usuario.nome}
+            Endereço: ${resultado.endereco.rua}
+            Telefone: ${resultado.telefone.ddd} ${resultado.telefone.telefone}
+        `)
+    })
+    .catch(function (error) {
+        console.log('Deu Ruim', error)
+    })
 
-// console.log('telefone', telefone);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// obterUsuario(function resolverUsuario(error, usuario) {
+//     if(error){
+//         console.error('deu ruim em usuário', error)
+//         return;
+//     }
+//     obterTelefone(usuario.id, function resolvertelefone(error1, telefone ) {
+//         if(error1){
+//             console.error('deu ruim em telefone', error1)
+//             return;
+//         }
+//         obterEndereço(usuario.id, function resolverEndereco(error2, endereco) {
+//             if(error2){
+//                 console.error('deu ruim em endereço', error2)
+//                 return;
+//             }
+
+//             console.log(`
+//                 Nome: ${usuario.nome},
+//                 Endereco: ${endereco.rua},
+//                 Telefone: (${telefone.ddd}) ${telefone.telefone}
+//             `)
+//         })
+//     })
+// }) 
