@@ -1,10 +1,12 @@
 # Curso Node.js
-Instrutor: [Erick Wendel](https://www.linkedin.com/in/erickwendel/)<br>
+Instrutor: [Erick Wendel](https://www.linkedin.com/in/erickwendel/)
 
 
 ___[NodeBr](https://treinamento.nodebr.org/) - Imersão em desenvolvimento de APIs com Node.js___
 
 <br>
+
+# Modulo 1 - Sincronia de funções Javascript
 
 ### __NodeJS Não é:__
 
@@ -35,6 +37,48 @@ Node é multiplataforma: quando for instalar as dependências ele reconhece a pl
 
 <br>
 
-### __Ferramentas:__
+### __Introdução a resolução de Promises com async/await__
+
+- Facilita a visualização do fluxo de funções;
+- Não altera a performance de sua aplicação, se usar no momento certo;
+- Veio do C#;
+- Usar apenas quando necessitar tratar a resposta da chamada
+
+
+### __Introdução à manipulação de eventos com EventEmitter__
+
+- Ele é usado em funções contínuas;
+- Nodejs usa para quase tudo em seu ecosistema
+- Bastante usado também nos browsers(onClick)
+- Trabalha sob o Design Pattern Observer/PubSub
+
+<br>
+
+# Modulo 2 - Manipulação de listas
+Vamos usar a API Star Wars
+[SWAPI](https://swapi.dev/)
+
+Quando a gente da npm install axios ele ja salva como dependencia do projeto automaticamente nessa versão de node.
+
+Quando eu tenho o package.json no projeto e rodo o npm install, ele pega todas as dependências e instala independente de qual plataforma estiver usando.
+
+Quando roda npm install + nome, ex: npm install axios, ele instala o que você esta pedindo e salva em dependecies
+
+<br>
+
+## __Comandos úteis:__
+
+```javascript
+//captura o erro
+console.error()
+//captura o tempo do trecho
+console.time('medida-promisse')
+console.timeEnd('medida-promisse')
+```
+
+<br>
+
+
+## __Ferramentas:__
 
 [Hapijs](https://github.com/hapijs/hapi)
